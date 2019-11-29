@@ -84,19 +84,19 @@
             <div class="layui-upload">
                 <label class="layui-form-label">头像</label>
                 <div class="layui-upload-list">
-                    <img class="layui-upload-img" id="demo1" style="width: 100px;height:100px">
+                    <img class="layui-upload-img" id="demo1" name="demo1"  src="/pic/" style="width: 100px;height:100px">
                     <button type="button" class="layui-btn layui-btn-img" id="test1">上传头像</button>
                     <p id="demoText"></p>
                 </div>
             </div>
-             <div class="layui-form-item" style="margin-top:40px">
-            <div class="layui-input-block">
-                <button class="layui-btn layui-btn-submit " lay-submit=""
-                        lay-filter="update-submit_btn">确认修改
-                </button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <div class="layui-form-item" style="margin-top:40px">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-submit " lay-submit=""
+                            lay-filter="update-submit_btn" id="upload">确认修改
+                    </button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
             </div>
-        </div>
         </div>
     </form>
 </script>
@@ -127,10 +127,10 @@
                id="daddress"
         />
     </div>
- </script>
+</script>
 
 <script>
-    layui.use(['upload','table','jquery', 'form','layer'], function(){
+    layui.use(['upload', 'table', 'jquery', 'form', 'layer'], function () {
         var table = layui.table,
             $ = layui.$,
             upload = layui.upload,
@@ -140,30 +140,32 @@
         //第一个实例
         table.render({
             elem: '#demo'
-            ,height: 312
-            ,url: 'userList2.action' //数据接口
-            ,page: true //开启分页
-            ,limits: [5, 10, 15, 20]
-            ,limit: 5
-            ,id: 'testReload'
-            ,toolbar: '#toolbarDemo'
-            ,cols: [[ //表头
+            , height: 312
+            , url: 'userList2.action' //数据接口
+            , page: true //开启分页
+            , limits: [5, 10, 15, 20]
+            , limit: 5
+            , id: 'testReload'
+            , toolbar: '#toolbarDemo'
+            , cols: [[ //表头
                 {type: 'checkbox', fixed: 'left'}
-                ,{field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-                ,{field: 'name', title: '用户名', width:80}
-                ,{field: 'loginName', title: '登录名', width:80, sort: true}
-                ,{field: 'password', title: '密码', width:80}
-                ,{field: 'gender', title: '性别', width: 177}
-                ,{field: 'birthDate', title: '生日', width: 80, sort: true}
-                ,{field: 'phone', title: '电话', width: 80, sort: true}
-                ,{field: 'address', title: '地址', width: 80}
-                ,{field: 'userType', title: '用户权限', width: 135, sort: true}
+                , {field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
+                , {field: 'name', title: '用户名', width: 80}
+                , {field: 'loginName', title: '登录名', width: 80, sort: true}
+                , {field: 'password', title: '密码', width: 80}
+                , {field: 'gender', title: '性别', width: 177}
+                , {field: 'birthDate', title: '生日', width: 80, sort: true}
+                , {field: 'phone', title: '电话', width: 80, sort: true}
+                , {field: 'address', title: '地址', width: 80}
+                , {field: 'userType', title: '用户权限', width: 135, sort: true}
                 //注意div不可省略
-                ,{field: 'headpath', title: '头像', width: 80,
-                    templet:'<div><img class="layui-upload-img" id="demo1" style="width: 30px;height: 30px" src="/pic/{{d.headpath}}" alt=""></div>'}
-                ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+                , {
+                    field: 'headpath', title: '头像', width: 80,
+                    templet: '<div><img class="layui-upload-img" id="demo1" style="width: 30px;height: 30px" src="/pic/{{d.headpath}}" alt=""></div>'
+                }
+                , {fixed: 'right', width: 165, align: 'center', toolbar: '#barDemo'}
             ]]
-            ,done: function (res, curr, count) {  //回调函数解决最后一页删除跳转到前一页
+            , done: function (res, curr, count) {  //回调函数解决最后一页删除跳转到前一页
                 if (res.data.length == 0 && count > 0) {
                     table.reload('testReload', {
                         page: {
@@ -177,10 +179,10 @@
 
 
         //监听行工具事件
-        table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data //获得当前行数据
-                ,layEvent = obj.event; //获得 lay-event 对应的值
-            if(layEvent === 'detail'){      //查看
+                , layEvent = obj.event; //获得 lay-event 对应的值
+            if (layEvent === 'detail') {      //查看
                 //layer.msg('查看操作');
                 //弹出即全屏
                 var index1 = layer.open({
@@ -194,8 +196,8 @@
                 $("#dbirthDate").html(data.birthDate);
                 $("#daddress").html(data.address);
                 $("#headpath").html(data.headpath);
-            } else if(layEvent === 'del'){      //单个删除
-                layer.confirm('真的删除行么', function(index){
+            } else if (layEvent === 'del') {      //单个删除
+                layer.confirm('真的删除行么', function (index) {
                     $.ajax({
                         url: "delete.action",
                         data: {"ids": data.id},
@@ -210,10 +212,11 @@
                         }
                     })
                     //obj.del(); //删除对应行（tr）的DOM结构
-                   // layer.close(index);
+                    // layer.close(index);
                     //向服务端发送删除指令
                 });
-            } else if(layEvent === 'edit'){     //编辑(修改)
+            }
+            else if (layEvent === 'edit') {     //编辑(修改)
                 //layer.msg('编辑操作');
                 layer.open({ //打开页面
                     title: "编辑用户",
@@ -229,10 +232,52 @@
                         loginName: obj.data.loginName,
                         birthDate: obj.data.birthDate,
                         address: obj.data.address,
-                        headpath:obj.data.headpath
+                        demo1: obj.data.demo1
                     }
                 );
             }
+
+            //普通图片上传
+            var id = $('#id').val();
+            var uploadInst = upload.render({
+                elem: '#test1'
+                , url: 'uploadFile.action'
+                ,auto: false //选择文件后不自动上传
+                ,bindAction: '#upload' //指向一个按钮触发上传
+                , data: {
+                    id: function () {
+                        return id;
+                    }
+                }
+                , before: function (obj) {
+                    //预读本地文件示例，不支持ie8
+                    layer.load(); //上传loading
+                    obj.preview(function (index, file, result) {
+                        $('#demo1').attr('src', result); //图片链接（base64）
+                    });
+                }
+                , done: function (res) {
+                    //如果上传失败
+                    if (res.code > 0) {
+                        return layer.msg('上传失败');
+                    } else {
+                        layer.close(layer.index)
+                        parent.location.reload();
+                        return layer.msg('上传成功');
+                        //上传成功
+                    }
+                }
+                , error: function () {
+                    //演示失败状态，并实现重传
+                    var demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function () {
+                        uploadInst.upload();
+                    });
+                }
+            });
+
+
         });
         form.on('submit(update-submit_btn)', function (data) {
             console.log(data);
@@ -289,7 +334,7 @@
                                     if (flag > 0) {
                                         layer.msg("删除成功", {icon: 6});
                                         layer.closeAll();
-                                        table.reload('testReload',{});
+                                        table.reload('testReload', {});
                                     } else {
                                         layer.msg("删除失败", {icon: 6});
                                     }
@@ -304,8 +349,9 @@
                 'update'://编辑(左上角的编辑按钮)
                     layer.msg('编辑');
                     break;
-            };
-            });
+            }
+            ;
+        });
 
 
         //监听复选框选择
@@ -334,7 +380,7 @@
 
         //查询
         var active = {
-            reload: function(){
+            reload: function () {
                 var searchName = $('#searchName');
                 var searchAddress = $('#searchAddress');
 
@@ -343,57 +389,22 @@
                     page: {
                         curr: 1 //重新从第 1 页开始
                     }
-                    ,url:"userList2.action"
-                    ,where: {
-                            'name': searchName.val(),
-                            'address': searchAddress.val()
+                    , url: "userList2.action"
+                    , where: {
+                        'name': searchName.val(),
+                        'address': searchAddress.val()
                     }
                 }, 'data');
 
             }
         };
 
-        $('.demoTable .layui-btn').on('click', function(){
+        $('.demoTable .layui-btn').on('click', function () {
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
 
 
-        //普通图片上传
-        var id = $('#id').val();
-        var uploadInst = upload.render({
-            elem: '#test1'
-            ,url: 'uploadFile.action'
-            ,data:{id:function () {
-                    return id;
-                }}
-            ,before: function(obj){
-                //预读本地文件示例，不支持ie8
-                console.log(obj);
-                obj.preview(function(index, file, result){
-                    $('#demo1').attr('src', result); //图片链接（base64）
-                });
-            }
-            ,done: function(res) {
-                //如果上传失败
-                if (res.code > 0) {
-                    return layer.msg('上传失败');
-                } else {
-                    layer.close(layer.index)
-                    parent.location.reload();
-                    return layer.msg('上传成功');
-                    //上传成功
-                }
-            }
-            ,error: function(){
-                //演示失败状态，并实现重传
-                var demoText = $('#demoText');
-                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
-                demoText.find('.demo-reload').on('click', function(){
-                    uploadInst.upload();
-                });
-            }
-        });
     });
 
 </script>

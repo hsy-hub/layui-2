@@ -58,7 +58,7 @@
         <div class="layui-form-item" style="margin-top:40px">
             <div class="layui-input-block">
                 <button class="layui-btn layui-btn-submit " lay-submit=""
-                        lay-filter="update-submit_btn">添加
+                        lay-filter="update-submit_btn" id="add">添加
                 </button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             </div>
@@ -103,7 +103,7 @@
             elem: '#test1'
             ,url: 'addUser.action'
             ,auto: false//选择文件后不自动上传
-            , bindAction: '#uploadImg'
+            , bindAction: '#add' //指向一个按钮触发上传
             ,before: function(obj){
                 layer.load(); //上传loading
                 this.data = {'id': reid};//整合上传的参数
