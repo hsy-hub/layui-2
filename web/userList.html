@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/layui1/layui/css/layui.css" media="all">
+</head>
+<body>
+<script src="/layui1/layui/layui.all.js"></script>
+
+<div class="demoTable" style="margin-top: 20px">
+    &nbsp; 姓名：
+    <div class="layui-inline">
+        <input class="layui-input" name="name" id="searchName" autocomplete="off">
+    </div>
+    住址：
+    <div class="layui-inline">
+        <input class="layui-input" name="address" id="searchAddress" autocomplete="off">
+    </div>
+    <button class="layui-btn" id="searchBtn" data-type="reload">搜索</button>
+</div>
+
+
+<table id="demo" lay-filter="test"></table>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" id="btn-add" lay-event="add">添加</button>
+        <button class="layui-btn layui-btn-sm delAll_btn" lay-event="delete">批量删除</button>
+        <button class="layui-btn layui-btn-sm" lay-event="update">编辑</button>
+    </div>
+</script>
+
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<!--编辑操作-->
+<script type="text/html" id="updatepage">
+    <form class="layui-form" lay-filter="update-form">
+        <div class="layui-input-block ">
+            <input type="hidden" name="id"
+                   id="id"
+                   required lay-verify="required">
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block ">
+                <input type="text" name="name"
+                       id="name"
+                       required lay-verify="required" class="layui-input" style="width: 200px"
+                       placeholder="请输入姓名">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录名</label>
+            <div class="layui-input-block ">
+                <input type="text" name="loginName" class="layui-input" style="width: 200px"
+                       id="loginName"
+                       required lay-verify="required"
+                       placeholder="请输入登录名">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">生日</label>
+            <div class="layui-input-block ">
+                <input type="text" name="birthDate" class="layui-input" style="width: 200px"
+                       id="birthDate"
+                       required lay-verify="required">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-block ">
+                <input type="text" name="address" class="layui-input" style="width: 200px"
+                       id="address"
+                       required lay-verify="required"
+                       placeholder="地址">
+            </div>
+            <div class="layui-upload">
+                <label class="layui-form-label">头像</label>
+                <div class="layui-upload-list">
+                    <img class="layui-upload-img" id="demo1" style="width: 100px;height:100px">
+                    <button type="button" class="layui-btn layui-btn-img" id="test1">上传头像</button>
+                    <p id="demoText"></p>
+                </div>
+            </div>
+             <div class="layui-form-item" style="margin-top:40px">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-submit " lay-submit=""
+                        lay-filter="update-submit_btn">确认修改
+                </button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+        </div>
+    </form>
+</script>
+
+<!--查看操作-->
+<script type="text/html" id="detailForm">
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名:</label>
+        <label class="layui-form-label"
+               id="dname"
+        />
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">登录名:</label>
+        <label class="layui-form-label"
+               id="dloginName"
+        />
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">生日:</label>
+        <label class="layui-form-label"
+               id="dbirthDate"
+        />
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址:</label>
+        <label class="layui-form-label"
+               id="daddress"
+        />
+    </div>
+ </script>
+
+<script>
+    layui.use(['upload','table','jquery', 'form','layer'], function(){
+        var table = layui.table,
+            $ = layui.$,
+            upload = layui.upload,
+            layer = layui.layer,
+            form = layui.form;
+
+        //第一个实例
+        table.render({
+            elem: '#demo'
+            ,height: 312
+            ,url: 'userList2.action' //数据接口
+            ,page: true //开启分页
+            ,limits: [5, 10, 15, 20]
+            ,limit: 5
+            ,id: 'testReload'
+            ,toolbar: '#toolbarDemo'
+            ,cols: [[ //表头
+                {type: 'checkbox', fixed: 'left'}
+                ,{field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+                ,{field: 'name', title: '用户名', width:80}
+                ,{field: 'loginName', title: '登录名', width:80, sort: true}
+                ,{field: 'password', title: '密码', width:80}
+                ,{field: 'gender', title: '性别', width: 177}
+                ,{field: 'birthDate', title: '生日', width: 80, sort: true}
+                ,{field: 'phone', title: '电话', width: 80, sort: true}
+                ,{field: 'address', title: '地址', width: 80}
+                ,{field: 'userType', title: '用户权限', width: 135, sort: true}
+                //注意div不可省略
+                ,{field: 'headpath', title: '头像', width: 80,
+                    templet:'<div><img class="layui-upload-img" id="demo1" style="width: 30px;height: 30px" src="/pic/{{d.headpath}}" alt=""></div>'}
+                ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+            ]]
+            ,done: function (res, curr, count) {  //回调函数解决最后一页删除跳转到前一页
+                if (res.data.length == 0 && count > 0) {
+                    table.reload('testReload', {
+                        page: {
+                            curr: curr - 1
+                        }
+                    });
+                }
+            }
+
+        });
+
+
+        //监听行工具事件
+        table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+            if(layEvent === 'detail'){      //查看
+                //layer.msg('查看操作');
+                //弹出即全屏
+                var index1 = layer.open({
+                    type: 1,
+                    content: $('#detailForm').html(),
+                    maxmin: true
+                });
+                layer.full(index1);
+                $("#dname").html(data.name);
+                $("#dloginName").html(data.loginName);
+                $("#dbirthDate").html(data.birthDate);
+                $("#daddress").html(data.address);
+                $("#headpath").html(data.headpath);
+            } else if(layEvent === 'del'){      //单个删除
+                layer.confirm('真的删除行么', function(index){
+                    $.ajax({
+                        url: "delete.action",
+                        data: {"ids": data.id},
+                        success: function (flag) {
+                            if (flag == 1) {
+                                layer.msg("删除成功", {icon: 6});
+                                layer.closeAll();
+                                table.reload('testReload', {});
+                            } else {
+                                layer.msg("删除 失败", {icon: 6});
+                            }
+                        }
+                    })
+                    //obj.del(); //删除对应行（tr）的DOM结构
+                   // layer.close(index);
+                    //向服务端发送删除指令
+                });
+            } else if(layEvent === 'edit'){     //编辑(修改)
+                //layer.msg('编辑操作');
+                layer.open({ //打开页面
+                    title: "编辑用户",
+                    type: 1,
+                    content: $('#updatepage').html(),
+                    area: ['700px', '400px'],
+                    closeBtn: 2,
+                    skin: 'layui-layer-rim', //加上边框
+                })
+                form.val('update-form', { //填充数据
+                        id: obj.data.id, //这里必须用input name属性
+                        name: obj.data.name,
+                        loginName: obj.data.loginName,
+                        birthDate: obj.data.birthDate,
+                        address: obj.data.address,
+                        headpath:obj.data.headpath
+                    }
+                );
+            }
+        });
+        form.on('submit(update-submit_btn)', function (data) {
+            console.log(data);
+            $.post('updateUserList.action', data.field, function (flag) {
+
+                if (flag == 1) {
+                    layer.msg("修改成功", {icon: 6});
+                    layer.closeAll();
+                    table.reload('testReload', {});//修改后返回列表页面进行刷新
+                } else {
+                    layer.msg("修改失败", {icon: 6});
+                }
+            })
+            //return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        })
+
+        table.on('toolbar(test)', function (obj) {
+            //var checkStatus = table.checkStatus(obj.config.id);
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'add'://添加
+                    var w = ($(window).width() * 0.7);
+                    var h = ($(window).height() - 50);
+                    var index3 = layer.open({
+                        resize: true,
+                        title: '添加记录',
+                        shadeClose: true,
+                        area: [w + 'px', h + 'px'],
+                        type: 2,
+                        content: 'add.action',
+                        success: function (layero, index) {
+                            var body = layer.getChildFrame('body', index);
+                            body.find('#content').append(editor.txt.html());
+                        }
+                    });
+                    layer.full(index3);
+                    break;
+
+
+                case 'delete'://批量删除
+                    var data = checkStatus.data,
+                        id = "";
+                    if (data.length > 0) {
+                        for (var i in data) {
+                            id += data[i].id + ","
+                            layer.msg(id);
+                        }
+                        console.log(id);
+                        layer.confirm('真的删除行么', function (index) {
+                            $.ajax({
+                                url: "/layui1/delete.action",
+                                data: {"ids": id},
+                                success: function (flag) {
+                                    if (flag > 0) {
+                                        layer.msg("删除成功", {icon: 6});
+                                        layer.closeAll();
+                                        table.reload('testReload',{});
+                                    } else {
+                                        layer.msg("删除失败", {icon: 6});
+                                    }
+
+                                }
+                            })
+
+                        })
+                    }
+                    break;
+                case
+                'update'://编辑(左上角的编辑按钮)
+                    layer.msg('编辑');
+                    break;
+            };
+            });
+
+
+        //监听复选框选择
+        $(".delAll_btn").on("click", function () {
+
+            var checkStauts = table.checkStatus("demo"), //demo是table的id checkstauts 是所有被选中的列表项
+                data = checkStauts.data,
+                user_ids = "";
+
+            if (data.length > 0) {
+                for (var i in data) {
+                    user_ids += data[i].user_id + ","
+                }
+
+                console.log(user_ids);
+                layer.confirm("确定删除选中的记录么？", {icon: 3, ttial: '提示信息'}, function (idenx) {
+                    $.post("delete.action", {"user_ids": user_ids}, function (data) {
+
+                        table.reload('testReload', {});
+                        layer.close(index);
+                    })
+
+                })
+            }
+        })
+
+        //查询
+        var active = {
+            reload: function(){
+                var searchName = $('#searchName');
+                var searchAddress = $('#searchAddress');
+
+                //执行重载
+                table.reload('testReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,url:"userList2.action"
+                    ,where: {
+                            'name': searchName.val(),
+                            'address': searchAddress.val()
+                    }
+                }, 'data');
+
+            }
+        };
+
+        $('.demoTable .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+        //普通图片上传
+        var id = $('#id').val();
+        var uploadInst = upload.render({
+            elem: '#test1'
+            ,url: 'uploadFile.action'
+            ,data:{id:function () {
+                    return id;
+                }}
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                console.log(obj);
+                obj.preview(function(index, file, result){
+                    $('#demo1').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res) {
+                //如果上传失败
+                if (res.code > 0) {
+                    return layer.msg('上传失败');
+                } else {
+                    layer.close(layer.index)
+                    parent.location.reload();
+                    return layer.msg('上传成功');
+                    //上传成功
+                }
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

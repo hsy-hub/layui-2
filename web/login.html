@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>layui_Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/layui1/layui/css/layui.css" media="all">
+    <script src="/layui1/layui/layui.all.js"></script>
+</head>
+<body>
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">登录名:</label>
+        <div class="layui-input-block">
+            <input type="text" name="loginName" required lay-verify="title" autocomplete="off"
+                   placeholder="请输入标题" class="layui-input">
+
+
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码框</label>
+        <div class="layui-input-block">
+            <input type="password" name="password" lay-verify="password" required placeholder="请输入密码"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    layui.use(['layer', 'form', "jquery"], function () {
+        var form = layui.form,
+            layer = layui.layer;
+        $ = layui.$ //重点处:引入原生的Jquery $
+
+
+        //自定义验证规则
+        form.verify({
+            title: function (value) {
+                if (value.length < 5) {
+                    return '标题至少得5个字符啊';
+                }
+            }
+            , password: [
+                /^[\S]{5,12}$/
+                , '密码必须5到12位，且不能出现空格'
+            ]
+
+        });
+
+
+        form.render();
+        form.on('submit(demo1)', function (data) {
+            console.log("1111111");
+            $.ajax(
+                {
+                    url: "/layui1/loginlayui.action",
+                    data: JSON.stringify(data.field),
+                    dataType: "json",
+                    type: "post",
+                    contentType: "application/json",
+                    success: function (d) {
+                        if (d.msg == "success") {
+                            console.log(d);
+                            location.href = "/layui1/back.action";
+                        } else {
+                            layer.msg("用户名密码错误")
+                        }
+                    }
+                }
+            )
+            return false;
+        });
+    })
+
+
+</script>
+</body>
+</html>
