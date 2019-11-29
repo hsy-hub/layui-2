@@ -129,12 +129,13 @@ public class UserController {
 
     @RequestMapping("/uploadFile.action")
     @ResponseBody
-    public Map<String,Object> uploadFile(@RequestParam("file") MultipartFile pictureFile,User user,int id) throws IOException {
+    public Map<String,Object> uploadFile(@RequestParam("file") MultipartFile pictureFile,Integer id) throws IOException {
         Map<String, Object> map = new HashMap<>();
         String filname = UUID.randomUUID().toString().replaceAll("-","");
         String extension = FilenameUtils.getExtension(pictureFile.getOriginalFilename());
         filname = filname +"."+ extension;
         pictureFile.transferTo(new File("D:\\upload\\" + filname));
+        User user = new User();
         user.setHeadpath(filname);
         user.setId(id);
         int i = userDao.updateHeadPath(user);
