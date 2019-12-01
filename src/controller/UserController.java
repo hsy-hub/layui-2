@@ -109,21 +109,15 @@ public class UserController {
 
     @RequestMapping("/addUser.action")
     @ResponseBody
-    public Map<String,String> addUser(@RequestBody @RequestParam("file") MultipartFile pictureFile,User user,int id) throws IOException {
-        Map<String, String> msg = new HashMap<>();
-        String filname = UUID.randomUUID().toString().replaceAll("-","");
-        String extension = FilenameUtils.getExtension(pictureFile.getOriginalFilename());
-        filname = filname +"."+ extension;
-        pictureFile.transferTo(new File("D:\\upload\\" + filname));
-        user.setHeadpath(filname);
-        user.setId(id);
+    public Map<String, Object> addUser(@RequestBody User user) throws IOException {
+        Map<String,Object> map = new HashMap<>();
         int add = userDao.add(user);
-        if (add >0){
-            msg.put("msg", "success");
-            return msg;
-        }else{
-            msg.put("msg", "false");
-            return msg;
+        if (add > 0){
+            map.put("msg", add);
+            return map;
+        }else {
+            map.put("msg", add);
+            return map;
         }
     }
 
@@ -134,12 +128,38 @@ public class UserController {
         String filname = UUID.randomUUID().toString().replaceAll("-","");
         String extension = FilenameUtils.getExtension(pictureFile.getOriginalFilename());
         filname = filname +"."+ extension;
-        pictureFile.transferTo(new File("D:\\upload\\" + filname));
+        String path = "D:\\upload";
         User user = new User();
         user.setHeadpath(filname);
         user.setId(id);
         int i = userDao.updateHeadPath(user);
-        map.put("res",i);
+        if (i > 0) {       //当数据库有记录时才上传文件
+            pictureFile.transferTo(new File("D:\\upload\\" + filname));
+        }
+        File dir = new File(path, filname);
+        if(dir.exists()) {    //当有文件时上传记录
+            i = userDao.updateHeadPath(user);
+        }
+        if (dir.exists() && i < 1) {     //数据库有记录但是文件上传失败
+            dir.delete();
+            map.put("msg", "上传失败");
+            map.put("code", 1);
+        } else if (!dir.exists() && i > 0) {    //数据库无记录但是文件上传成功
+            user.setHeadpath(null);
+            userDao.updateHeadPath(user);
+            dir.delete();
+            map.put("msg", "上传失败");
+            map.put("code", 1);
+        } else if (!dir.exists() && i < 1) {      //数据库无记录文件也未上传成功
+            dir.delete();
+            map.put("msg", "上传失败");
+            map.put("code", 1);
+        } else {             //数据库有记录文件也上传成功
+            dir.mkdirs();
+            map.put("msg", "上传成功");
+            map.put("code", 0);
+            map.put("src","http://localhost:8086/pic/"+filname);
+        }
         return map;
     }
 }

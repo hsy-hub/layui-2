@@ -256,9 +256,9 @@
                         $('#demo1').attr('src', result); //图片链接（base64）
                     });
                 }
-                , done: function (res) {
+                , done: function (msg) {
                     //如果上传失败
-                    if (res.code > 0) {
+                    if (msg.code > 0) {
                         return layer.msg('上传失败');
                     } else {
                         layer.close(layer.index)
