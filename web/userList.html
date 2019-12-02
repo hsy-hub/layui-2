@@ -132,7 +132,6 @@
     <label class="layui-form-label">头像</label>
     <div class="layui-upload-list">
         <img class="layui-upload-img" id="headpath1" name="demo1" style="width: 100px;height:100px">
-
     </div>
 
 </script>
@@ -203,8 +202,6 @@
                 $("#dloginName").html(data.loginName);
                 $("#dbirthDate").html(data.birthDate);
                 $("#daddress").html(data.address);
-                $("#headpath").html(data.headpath);
-
                 $("#headpath1").attr("src", "/pic/" + data.headpath);
             } else if (layEvent === 'del') {      //单个删除
                 layer.confirm('真的删除行么', function (index) {
@@ -235,7 +232,7 @@
                     area: ['700px', '400px'],
                     closeBtn: 2,
                     skin: 'layui-layer-rim', //加上边框
-                })
+                });
                 form.val('update-form', { //填充数据
                         id: obj.data.id, //这里必须用input name属性
                         name: obj.data.name,

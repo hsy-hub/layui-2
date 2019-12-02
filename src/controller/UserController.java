@@ -50,12 +50,13 @@ public class UserController {
         return "back";
     }
 
+    //点击列表一跳转至列表页面
     @RequestMapping("/userListPage.action")
     public String userListPage() {
         return "userList";
     }
 
-
+    //不带分页的列表
     @RequestMapping("/userList.action")
     @ResponseBody
     public Map<String, Object> userList() {
@@ -71,7 +72,7 @@ public class UserController {
         int pagestart = (page - 1) * limit;
         map.put("pagestart", pagestart);
         map.put("size", limit);
-        map.put("name", user.getName());
+        map.put("name", user.getName());//查询条件
         map.put("address", user.getAddress());
         List<User> userList = userDao.getUserList2(map);
         Integer pagecount = userDao.userCount();
