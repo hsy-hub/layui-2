@@ -7,8 +7,9 @@ import pojo.User;
 
 import java.util.HashMap;
 import java.util.List;
+
 @Service
-public class UserDaoImpl implements UserDao{
+public class UserDaoImpl implements UserDao {
     @Autowired
     UserMapper userMapper;
 
@@ -44,7 +45,8 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public int add(User user) {
-        return userMapper.add(user);
+        userMapper.add(user);
+        return user.getId();
     }
 
     @Override

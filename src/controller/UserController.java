@@ -30,104 +30,100 @@ public class UserController {
 
     @RequestMapping("/loginlayui.action")
     @ResponseBody
-    public Map<String,String> loginlayui(@RequestBody User user){
+    public Map<String, String> loginlayui(@RequestBody User user) {
 
         HttpSession session = request.getSession();
         User loginUser = userDao.login(user);
         Map<String, String> msg = new HashMap<>();
-        if (loginUser != null){
+        if (loginUser != null) {
             session.setAttribute("user", loginUser);
             msg.put("msg", "success");
             return msg;
-        }else{
+        } else {
             msg.put("msg", "false");
             return msg;
         }
     }
 
     @RequestMapping("/back.action")
-    public String back(){
+    public String back() {
         return "back";
     }
 
     @RequestMapping("/userListPage.action")
-    public String userListPage(){
+    public String userListPage() {
         return "userList";
     }
 
 
     @RequestMapping("/userList.action")
     @ResponseBody
-    public Map<String,Object> userList(){
+    public Map<String, Object> userList() {
         List<User> userList = userDao.getUserList();
-        return Tool.testLayui(userList,0,0);
+        return Tool.testLayui(userList, 0, 0);
     }
 
 
     @RequestMapping("/userList2.action")
     @ResponseBody
-    public Map<String,Object> UserList2(int page,int limit,User user){
-        HashMap<String,Object> map = new HashMap<>();
+    public Map<String, Object> UserList2(int page, int limit, User user) {
+        HashMap<String, Object> map = new HashMap<>();
         int pagestart = (page - 1) * limit;
-        map.put("pagestart",pagestart);
-        map.put("size",limit);
-        map.put("name",user.getName());
-        map.put("address",user.getAddress());
+        map.put("pagestart", pagestart);
+        map.put("size", limit);
+        map.put("name", user.getName());
+        map.put("address", user.getAddress());
         List<User> userList = userDao.getUserList2(map);
         Integer pagecount = userDao.userCount();
-        Map<String,Object> returnTable = Tool.testLayui(userList,page,limit);
-        returnTable.put("count",pagecount);
+        Map<String, Object> returnTable = Tool.testLayui(userList, page, limit);
+        returnTable.put("count", pagecount);
         return returnTable;
     }
 
 
     @RequestMapping("/updateUserList.action")
     @ResponseBody
-    public int updateUserList(User user){
+    public int updateUserList(User user) {
         return userDao.updateUserList(user);
     }
 
     @RequestMapping("/delete.action")
-    public  @ResponseBody int delete(String ids){
+    public @ResponseBody
+    int delete(String ids) {
         boolean d = ids.endsWith(",");
-        if(d){
-            ids = ids.substring(0,ids.length()-1);
+        if (d) {
+            ids = ids.substring(0, ids.length() - 1);
         }
         String[] all = ids.split(",");
 
         int result = 0;
-        for (String id : all){
+        for (String id : all) {
             result = userDao.delete(Integer.parseInt(id));
         }
-       return result ;
+        return result;
     }
 
     @RequestMapping("/add.action")
-    public String add(){
+    public String add() {
         return "add";
     }
 
     @RequestMapping("/addUser.action")
     @ResponseBody
-    public Map<String, Object> addUser(@RequestBody User user) throws IOException {
-        Map<String,Object> map = new HashMap<>();
+    public int addUser(@RequestBody User user) throws IOException {
+        Map<String, Object> map = new HashMap<>();
         int add = userDao.add(user);
-        if (add > 0){
-            map.put("msg", add);
-            return map;
-        }else {
-            map.put("msg", add);
-            return map;
-        }
+        return add;
+
     }
 
     @RequestMapping("/uploadFile.action")
     @ResponseBody
-    public Map<String,Object> uploadFile(@RequestParam("file") MultipartFile pictureFile,Integer id) throws IOException {
+    public Map<String, Object> uploadFile(@RequestParam("file") MultipartFile pictureFile, Integer id) throws IOException {
         Map<String, Object> map = new HashMap<>();
-        String filname = UUID.randomUUID().toString().replaceAll("-","");
+        String filname = UUID.randomUUID().toString().replaceAll("-", "");
         String extension = FilenameUtils.getExtension(pictureFile.getOriginalFilename());
-        filname = filname +"."+ extension;
+        filname = filname + "." + extension;
         String path = "D:\\upload";
         User user = new User();
         user.setHeadpath(filname);
@@ -137,7 +133,7 @@ public class UserController {
             pictureFile.transferTo(new File("D:\\upload\\" + filname));
         }
         File dir = new File(path, filname);
-        if(dir.exists()) {    //当有文件时上传记录
+        if (dir.exists()) {    //当有文件时上传记录
             i = userDao.updateHeadPath(user);
         }
         if (dir.exists() && i < 1) {     //数据库有记录但是文件上传失败
@@ -158,7 +154,7 @@ public class UserController {
             dir.mkdirs();
             map.put("msg", "上传成功");
             map.put("code", 0);
-            map.put("src","http://localhost:8086/pic/"+filname);
+            map.put("src", "http://localhost:8086/pic/" + filname);
         }
         return map;
     }

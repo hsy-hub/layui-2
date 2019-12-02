@@ -84,7 +84,7 @@
             <div class="layui-upload">
                 <label class="layui-form-label">头像</label>
                 <div class="layui-upload-list">
-                    <img class="layui-upload-img" id="demo1" name="demo1"  src="/pic/" style="width: 100px;height:100px">
+                    <img class="layui-upload-img" id="head" name="demo1" src="/pic/" style="width: 100px;height:100px">
                     <button type="button" class="layui-btn layui-btn-img" id="test1">上传头像</button>
                     <p id="demoText"></p>
                 </div>
@@ -127,6 +127,14 @@
                id="daddress"
         />
     </div>
+
+
+    <label class="layui-form-label">头像</label>
+    <div class="layui-upload-list">
+        <img class="layui-upload-img" id="headpath1" name="demo1" style="width: 100px;height:100px">
+
+    </div>
+
 </script>
 
 <script>
@@ -196,6 +204,8 @@
                 $("#dbirthDate").html(data.birthDate);
                 $("#daddress").html(data.address);
                 $("#headpath").html(data.headpath);
+
+                $("#headpath1").attr("src", "/pic/" + data.headpath);
             } else if (layEvent === 'del') {      //单个删除
                 layer.confirm('真的删除行么', function (index) {
                     $.ajax({
@@ -231,10 +241,12 @@
                         name: obj.data.name,
                         loginName: obj.data.loginName,
                         birthDate: obj.data.birthDate,
-                        address: obj.data.address,
-                        demo1: obj.data.demo1
+                        address: obj.data.address
+
                     }
                 );
+
+                $("#head").attr("src", "/pic/" + obj.data.headpath);
             }
 
             //普通图片上传
@@ -242,18 +254,21 @@
             var uploadInst = upload.render({
                 elem: '#test1'
                 , url: 'uploadFile.action'
-                ,auto: false //选择文件后不自动上传
-                ,bindAction: '#upload' //指向一个按钮触发上传
+                , auto: false //选择文件后不自动上传
+                , bindAction: '#upload' //指向一个按钮触发上传
                 , data: {
                     id: function () {
                         return id;
                     }
                 }
-                , before: function (obj) {
+                , before: function () {
                     //预读本地文件示例，不支持ie8
                     layer.load(); //上传loading
+
+                },
+                choose: function (obj) {
                     obj.preview(function (index, file, result) {
-                        $('#demo1').attr('src', result); //图片链接（base64）
+                        $('#head').attr('src', result); //图片链接（base64）
                     });
                 }
                 , done: function (msg) {
@@ -310,7 +325,7 @@
                         content: 'add.action',
                         success: function (layero, index) {
                             var body = layer.getChildFrame('body', index);
-                            body.find('#content').append(editor.txt.html());
+                            ///      body.find('#content').append(editor.txt.html());
                         }
                     });
                     layer.full(index3);
